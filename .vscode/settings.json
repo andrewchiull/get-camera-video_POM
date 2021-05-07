@@ -1,0 +1,3 @@
+{
+    "python.autoComplete.extraPaths": ["./example_official", "./insta_login_test"]
+}
