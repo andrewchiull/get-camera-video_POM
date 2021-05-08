@@ -1,124 +1,160 @@
-###### self.chosen_camera = 'BIME-ChiaYi'
-###### self.chosen_browser = 'firefox'
-###### self.chosen_os = 'ubuntu'
-###### TEST change today to a given date
-###### self.today = self.today.replace(month=4, day=1) b
-###### Create a "unrenamed" folder to keep the downloaded videos.
-###### Create a folder to keep the renamed videos.
+# Psuedo Code of Get_cam_videos
 
+## Constants and Variables
 
-## Get the dict of time stamps of all alerts on yesterday.
+- DIR
 
-### Go to the camera page.
-###### Choose camera.
-###### Remove the loading stream
+  - `HOME` or `PWD`
+  - `UNRENAMED`
+  - `RENAMED`
 
-### Open the calendar.
-###### Confirm the calendar is completely loaded.
-###### 如果 yesterday 不是在目前的月份的話，就按一下上個月；如果還沒找到，繼續按上個月。
-###### HOTFIX
+- `self.CAMERA_PLACE` = 'Chiayi' or 'Yunlin'
+- `browser` = 'chrome'
+- `os` = 'ubuntu'
 
-### Choose yesterday.
-###### Find yesterday; if it is disabled, quit.
+  - read frome `sys`
 
-###### Click yesterday.
+- `DATE` = yesterday by default
 
-### Find the event alerts.
+## Configs
 
-### Build a dict (self.alert) with time stamps and default status.
+must be in .gitignore
 
-###### TEST use only some videos
-###### alerts_list = alerts_list[3:7]
-##  Generate videos of the given time stamps.
-### Reload the camera page.
-###### Choose camera.
-###### Remove the loading stream
+- config.yaml
+  - account
+  - password
 
-### Generate videos from self.alerts.
+## Return a dict of time stamps of all events on `DATE`. -> dict(`events`)
 
-### IGNORE this loop when the status is NOT in these conditions.
+1. Go to the camera page
 
-### Select the time of the event.
+   - Click camera
+   - Remove the loading stream
 
-###### DONE Check if the selected results are correct.
+2. Open the calendar
 
-###### Generate a 2 min video in case the alert happens in the end of 1 min video.
+   - Confirm the calendar is completely loaded
+   - 如果 `DATE` 不是在目前的月份的話，就按一下上個月；如果還沒找到，繼續按上個月。
 
-###### time.sleep(self.SLEEP_SHORT) # sleep 按太快會 empty
+3. Choose `DATE`
 
-### Read the message from the alert-box; accept the alert-box.
-###### Confirm the alert box is present
+   1. Find `DATE`
 
-### Record the new status depending on the message.
-##  Download videos, and then delete them.
-### Generate videos from self.alerts.
-###### DO Timeout
-### IGNORE this loop when the status IS in these conditions.
-###### Create a .txt file when the video is empty.
+      - If it is disabled: No video uploaded; return empty dict
 
-## Check if the video is generated.
-### Go to the video page.
+   1. Click `DATE`
 
-###### Make a list of time stamps of all generated_videos.
+4. Find the motion events
+   - Sort the list to be in chronological order
+5. Return a dict:
+   - TODO Refine this. 
+   - Export this as yaml?
+   ```
+   events = {
+      0: {
+         time: datetime,
+         status: {
+            requested: None,
+            generated: None,
+            downloaded: None,
+            renamed: None
+         }
+      },
+      1: ...
+   }
+   ```
 
-###### Ignore if there are no videos generated video (the list is empty).
+## Request videos from `events`
 
-###### Ignore when the video is ungenerated.
-###### The video starts at 00 second.
-###### HOTFIX check this twice
-###### DEBUG
+- DO Timeout
 
-###### Find and download the video of the alert.
+1. Go to the camera page
 
-###### Remove the element(addSpotcam) that could block clicking
+   1. Choose camera
+   2. Remove the loading stream
 
-###### Firefox: Browser plays automatically, so clicking 'play' is not needed.
+2. for `event` in `events`:
 
-## Firefox: There will be a alert after clickng download.
-###### if self.chosen_browser == 'firefox':
-######     self.wait_and_accept_alert()
-######     downloading = self.find('//*[@id="loadingimg_r"]')
-######     # Firefox: There will be a downloading image after accepting alert.
-######     while True:
-######         if 'none' in downloading.get_attribute("style"):
-######             break
+   1. Read the `status`
 
-###### TEST Unable to click due to display
-###### self.xpath['closeWindow'] = f'//*[contains(@class,"fancybox-close")]'
-###### self.click(self.xpath['closeWindow'])
+      - `return None` when the `status` is in some conditions
 
-###### time.sleep(self.SLEEP_LONG) # sleep Downloading
-###### HOTFIX dead loop: Chrome 沒有完成下載（檔名還有Jhph.mp4.crdownload）
-## Checking process
-###### Wait until the video downloading is completed.
+   2. Request videos
 
-###### Ignore if the downloading video does NOT exist.
-###### FIXME undownloaded
+      1. Select the `time` and request
 
-###### HOTFIX dead loop: Chrome 完成下載 BUT didn't leave the loop）
-###### # Wait until the video is completely downloaded.
-###### while any('crdownload' in f for f in files):
-######     time.sleep(self.SLEEP_SHORT) # sleep Downloading
-###### End this checking process the video is completed.
+         - Check if the selected results are expected
+         - Request a 2 min video in case the `time` happens at the end of a 1 min video
 
-###### Rename and move the downloaded video.
+      2. Read the message from the alert
 
-## Upload to ftp                  
+         - Confirm the alert is present
+         - Accept the alert
 
+      3. `return` the new `status` depending on the message
 
-###### HOTFIX 下載完的跟改好名字的沒正確對應
+## Download generated videos
 
-###### Make a downloading log.
+- DO Timeout
 
-### Go to the video page.
-###### Delete the video from the website.
-###### TODO Record what is deleted.
-###### Go to the video page.
+1. Go to the video page
 
-###### logging.info(
-######     f'Wait {self.SLEEP_LONG} secs for requesting progress...')
-###### time.sleep(self.SLEEP_LONG) # sleep
-###### TODO solve the videos that unable to generate.
+2. for `event` in `events`:
 
+   1. Read the `status`
 
-###### self.delete_all()
+      - `return None` when the `status` is in some conditions
+      - Create a .txt file when the `status` is `empty`
+
+   2. Download videos of `events`
+
+      1. Check if the `video is generated`
+
+         - Make a set of `time` of all currently generated videos
+           - TODO if there are no videos generated(the list is empty)
+         - Check if the `time` is in the set
+
+      2. Change the `status` to:
+         1. `generated`
+         2. `ungenerated`
+
+   - Ignore when the video is ungenerated
+   - The video starts at 00 second
+   - HOTFIX check this twice
+   - DEBUG
+
+   - Find and download the video of the event
+
+   - Remove the element(addSpotcam) that could block clicking
+
+   - time.sleep(self.SLEEP_LONG) # sleep Downloading
+   - HOTFIX dead loop: Chrome 沒有完成下載（檔名還有 Jhph.mp4.crdownload）
+
+   ## Checking process
+
+   - Wait until the video downloading is completed
+
+   - Ignore if the downloading video does NOT exist
+   - FIXME undownloaded
+
+   - HOTFIX dead loop: Chrome 完成下載 BUT didn't leave the loop）
+
+   ## Wait until the video is completely downloaded
+
+   - End this checking process the video is completed
+
+   - Rename and move the downloaded video
+
+   ## Upload to ftp
+
+   - HOTFIX 下載完的跟改好名字的沒正確對應
+
+   - Make a downloading log
+
+   ## Delete the video from the website
+
+   1. Go to the video page
+
+   - TODO Record what is deleted
+   - Go to the video page
+   - TODO solve the videos that unable to generate
