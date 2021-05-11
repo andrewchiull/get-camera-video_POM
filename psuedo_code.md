@@ -26,60 +26,61 @@ must be in .gitignore
 
 ## Return a dict of time stamps of all events on `DATE`. -> dict(`events`)
 
-1. Go to the camera page
+- Go to the camera page
 
-   - Click camera
-   - Remove the loading stream
+  - Click camera
+  - Remove the loading stream
 
-2. Open the calendar
+- Find `DATE`
 
-   - Confirm the calendar is completely loaded
-   - 如果 `DATE` 不是在目前的月份的話，就按一下上個月；如果還沒找到，繼續按上個月。
+   1. Open the calendar
+      - Confirm the calendar is completely loaded
+      - 如果 `DATE` 不是在目前的月份的話，就按一下上個月；如果還沒找到，繼續按上個月。
 
-3. Choose `DATE`
+   2. Choose `DATE`
 
-   1. Find `DATE`
+      1. Find `DATE`
 
-      - If it is disabled: No video uploaded; return empty dict
+         - If it is disabled: No video uploaded; return empty dict
 
-   1. Click `DATE`
+      2. Click `DATE`
 
-4. Find the motion events
-   - Sort the list to be in chronological order
-5. Return a dict:
-   - TODO Refine this. 
-   - Export this as yaml?
-   ```
-   events = {
-      0: {
-         time: datetime,
-         status: {
-            requested: None,
-            generated: None,
-            downloaded: None,
-            renamed: None
-         }
-      },
-      1: ...
-   }
-   ```
+   3. Find the motion events
+      - Sort the list to be in chronological order
+   4. Return a dict / object:
+      - TODO Refine this.
+      - Export this as yaml (or json)?
+      ```
+      events = {
+         0: {
+            time: datetime,
+            status: {
+               requested: False,
+               generated: False,
+               downloaded: False,
+               renamed: False
+            }
+         },
+         1: ...
+      }
+      ```
 
 ## Request videos from `events`
 
 - DO Timeout
 
-1. Go to the camera page
+- Go to the camera page
 
-   1. Choose camera
-   2. Remove the loading stream
+  1.  Choose camera
+  2.  Remove the loading stream
 
-2. for `event` in `events`:
+- for `event` in `events`:
 
-   1. Read the `status`
+  1.  Read the `status`
 
       - `return None` when the `status` is in some conditions
 
-   2. Request videos
+  2.  Request videos
 
       1. Select the `time` and request
 
