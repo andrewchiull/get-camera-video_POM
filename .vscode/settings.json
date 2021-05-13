@@ -1,3 +1,11 @@
 {
-    "python.autoComplete.extraPaths": ["./example_official", "./insta_login_test"]
+    "python.autoComplete.extraPaths": [
+        // "/Users/andrewchiu/Documents/BuggiPro/2021/fruitfly/get-camera-video_POM",
+        // "./example_official", 
+        // "./spotcam_utils"
+    ],
+    // "python.linting.pylintArgs": [
+    //     "--errors-only",
+    //     "--disable=E0401"
+    // ],
 }

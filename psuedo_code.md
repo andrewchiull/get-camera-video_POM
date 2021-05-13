@@ -1,86 +1,95 @@
 # Psuedo Code of Get_cam_videos
 
-## Constants and Variables
+## Set environment
 
 - DIR
-
   - `HOME` or `PWD`
   - `UNRENAMED`
   - `RENAMED`
 
-- `self.CAMERA_PLACE` = 'Chiayi' or 'Yunlin'
+- `CAMERA_PLACE` = 'Chiayi' or 'Yunlin'
 - `browser` = 'chrome'
 - `os` = 'ubuntu'
 
-  - read frome `sys`
+  - read from `sys`
 
 - `DATE` = yesterday by default
 
 ## Configs
 
-must be in .gitignore
-
+- must be in .gitignore
 - config.yaml
   - account
   - password
 
 ## Return a dict of time stamps of all events on `DATE`. -> dict(`events`)
 
-- Go to the camera page
+1. Go to the camera page
 
-  - Click camera
-  - Remove the loading stream
+   1. Click camera
+   2. Remove the loading stream
 
-- Find `DATE`
+2. Choose `DATE`
 
    1. Open the calendar
-      - Confirm the calendar is completely loaded
-      - 如果 `DATE` 不是在目前的月份的話，就按一下上個月；如果還沒找到，繼續按上個月。
+
+      1. Confirm the calendar is completely loaded
+         - Click previous month if needed
 
    2. Choose `DATE`
 
       1. Find `DATE`
 
-         - If it is disabled: No video uploaded; return empty dict
+         - If `DATE` is disabled:
+           - No video uploaded; return empty dict
 
       2. Click `DATE`
 
-   3. Find the motion events
-      - Sort the list to be in chronological order
-   4. Return a dict / object:
-      - TODO Refine this.
-      - Export this as yaml (or json)?
-      ```
-      events = {
-         0: {
-            time: datetime,
-            status: {
-               requested: False,
-               generated: False,
-               downloaded: False,
-               renamed: False
-            }
-         },
-         1: ...
-      }
-      ```
+3. Find the motion events
+
+   - Sort the list in chronological order
+
+4. Return a dict of objects:
+
+   - TODO Refine this.
+   - Export this as yaml (or json)?
+
+   ```
+   events = {
+      0: {
+         time: datetime,
+         status: {
+            requested: bool = False
+            empty_once: bool = False
+            empty_twice: bool = False
+
+            generated: bool = False
+            downloaded: bool = False
+            renamed: bool = False
+            uploaded: bool = False
+            erased: bool = False
+         }
+      },
+      1: ...
+   }
+   ```
 
 ## Request videos from `events`
 
-- DO Timeout
+- TODO Timeout
 
-- Go to the camera page
+1. Go to the camera page
 
-  1.  Choose camera
-  2.  Remove the loading stream
+   1. Choose camera
+   2. Remove the loading stream
 
-- for `event` in `events`:
+2. for `event` in `events`:
 
-  1.  Read the `status`
+   1. Read the `status`
 
-      - `return None` when the `status` is in some conditions
+      - Skip this loop when the `status` is in some conditions
 
-  2.  Request videos
+   2. Request videos
 
       1. Select the `time` and request
 
@@ -89,14 +98,14 @@ must be in .gitignore
 
       2. Read the message from the alert
 
-         - Confirm the alert is present
-         - Accept the alert
+         1. Confirm the alert is present
+         2. Accept the alert
 
       3. `return` the new `status` depending on the message
 
 ## Download generated videos
 
-- DO Timeout
+- TODO Timeout
 
 1. Go to the video page
 
@@ -116,46 +125,37 @@ must be in .gitignore
          - Check if the `time` is in the set
 
       2. Change the `status` to:
+
          1. `generated`
          2. `ungenerated`
 
-   - Ignore when the video is ungenerated
-   - The video starts at 00 second
-   - HOTFIX check this twice
-   - DEBUG
+      3. Ignore when the video is ungenerated
 
-   - Find and download the video of the event
+      - check ungenerated twice?
 
-   - Remove the element(addSpotcam) that could block clicking
+      4. Find and download the video of the event
+         - Remove the element(addSpotcam) that could block clicking
 
-   - time.sleep(self.SLEEP_LONG) # sleep Downloading
-   - HOTFIX dead loop: Chrome 沒有完成下載（檔名還有 Jhph.mp4.crdownload）
+   3. Checking the video downloading is completed
 
-   ## Checking process
+      - HOTFIX dead loop: Chrome 沒有完成下載（檔名還有 Jhph.mp4.crdownload）
 
-   - Wait until the video downloading is completed
+      - Wait until the video downloading is completed
 
-   - Ignore if the downloading video does NOT exist
-   - FIXME undownloaded
+      - Ignore if the downloading video does NOT exist
+      - FIXME undownloaded
+      - HOTFIX dead loop: Chrome 完成下載 BUT didn't leave the loop）
 
-   - HOTFIX dead loop: Chrome 完成下載 BUT didn't leave the loop）
+   4. Rename and move the downloaded video
 
-   ## Wait until the video is completely downloaded
+      - HOTFIX 下載完的跟改好名字的沒正確對應
+      - Make a downloading log
 
-   - End this checking process the video is completed
+   5. Upload to ftp
 
-   - Rename and move the downloaded video
+## Erase the renamed video from the website
 
-   ## Upload to ftp
+1.  Go to the video page
 
-   - HOTFIX 下載完的跟改好名字的沒正確對應
-
-   - Make a downloading log
-
-   ## Delete the video from the website
-
-   1. Go to the video page
-
-   - TODO Record what is deleted
-   - Go to the video page
-   - TODO solve the videos that unable to generate
+- TODO Record what is deleted
+- TODO solve the videos that unable to generate
