@@ -10,9 +10,8 @@ class LoginPage(BasePage):
     login_locators = LoginPageLocators
 
     def get_login_page(self):
-        url = "https://www.instagram.com/"
+        url = "https://www.myspotcam.com/tc/welcome/login"
         self.get_page(url)
-        self.wait_for_browser_title("Instagram")
 
     def input_username(self, username):
         self.find_element(self.login_locators.USERNAME_TEXT_FIELD).send_keys(username)
