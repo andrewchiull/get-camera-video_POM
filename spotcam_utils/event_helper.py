@@ -9,28 +9,30 @@ from pydantic import BaseModel
 class Status(Enum):
     DEFAULT = 0
 
-    REQUESTED = 10
-    REQUESTED_EMPTY_ONCE = 11
-    REQUESTED_EMPTY_TWICE = 12
+    REQUEST_EMPTY_ONCE = 11
+    REQUEST_EMPTY_TWICE = 12
+    REQUEST_DONE = 20
 
-    GENERATED = 20
-    GENERATED_FAILED = 21
+    GENERATE_FAILED = 21
+    GENERATE_DONE = 30
 
-    DOWNLOADED = 30
-    DOWNLOADED_FAILED = 31
+    DOWNLOAD_FAILED = 31
+    DOWNLOAD_DONE = 40
 
-    RENAMED = 40
-    RENAMED_FAILED = 41
+    RENAME_FAILED = 41
+    RENAME_DONE = 50
 
-    UPLOADED = 50
-    UPLOADED_FAILED = 51
+    UPLOAD_FAILED = 51
+    UPLOAD_DONE = 60
 
-    ERASED = 60
-    ERASED_FAILED = 61
+    ERASE_FAILED = 61
+    ERASE_DONE = 70
+
+    ALL_DONE = 80
 
 class EventHelper(BaseModel):
     time: Optional[datetime]
-    status = Status.DEFAULT
+    status: Optional[Status] = Status.DEFAULT
 
     def __repr__(self):
         return f'{self.time} | {self.status}'
