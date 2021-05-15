@@ -58,17 +58,16 @@
    events = {
       0: {
          time: datetime,
-         status: {
-            requested: bool = False
-            empty_once: bool = False
-            empty_twice: bool = False
 
-            generated: bool = False
-            downloaded: bool = False
-            renamed: bool = False
-            uploaded: bool = False
-            erased: bool = False
-         }
+         requested: bool = False
+         empty_once: bool = False
+         empty_twice: bool = False
+
+         generated: bool = False
+         downloaded: bool = False
+         renamed: bool = False
+         uploaded: bool = False
+         erased: bool = False
       },
       1: ...
    }

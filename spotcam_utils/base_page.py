@@ -33,10 +33,16 @@ class BasePage:
         _element = self.wait.until(ec.presence_of_element_located(locator))
         return _element
 
-    def click_element(self, locator: tuple):
+    def find_elements(self, locator: tuple) -> list:
         logging.debug("Find Element: %s", locator)
+        self.wait.until(ec.presence_of_element_located(locator))
+        return self.driver.find_elements(*locator)
+
+    def click_element(self, locator: tuple):
+        logging.info("Click Element: %s", locator)
         _element = self.wait.until(ec.element_to_be_clickable(locator))
         _element.click()
+        self.wait_page_until_loading()
 
     def wait_for_browser_title(self, exp_title: str, timeout=60):
         for _ in range(timeout):
@@ -89,7 +95,7 @@ class BasePage:
 
     def wait_page_until_loading(self):
         """ Wait page until loading """
-        logging.info('>>> Wait for page until loading...')
+        logging.debug('>>> Wait for page until loading...')
         wait_time = 0.2
         start_t = time.time()
 
@@ -116,4 +122,16 @@ class BasePage:
 
         end_t = time.time()
         elapsedtime = round((end_t - start_t), 3)
-        logging.info("<<< Wait page loading spend time %s", elapsedtime)
+        logging.debug("<<< Wait page loading spend time %s", elapsedtime)
+
+    def remove_element(self, element):
+        """[summary] Delete the element from the website.
+
+        Args:
+            element (WebElement)
+        """        
+        # TEST "arguments[0]" in js will be replaced by element in python
+        self.driver.execute_script(r"""
+            let element = arguments[0];
+            element.parentNode.removeChild(element);
+            """, element)

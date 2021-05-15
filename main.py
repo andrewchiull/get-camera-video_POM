@@ -9,9 +9,13 @@ from selenium import webdriver
 
 from spotcam_utils.directory_helper import DirectoryHelper
 from spotcam_utils.pages.login_page_actions import LoginPage
+from spotcam_utils.pages.camera_page_actions import CameraPage
 from spotcam_utils.config_helper import ConfigHelper
+from spotcam_utils.event_helper import EventHelper
+from pprint import pprint, pformat
 
-CAMERA_PLACE = 'Chiayi'
+# CAMERA_PLACE = 'Chiayi'
+CAMERA_PLACE = 'Yunlin'
 
 yesterday = datetime.now() + timedelta(days=-1)
 DATE = yesterday
@@ -28,19 +32,20 @@ config_path = os.path.join(dirs.PWD, 'config.yaml')
 config = ConfigHelper(config_path)
 
 def main():
+    driver = get_driver()
+    login(driver)
+    events = get_events(driver)
+    if not events:
+        driver.quit()
+        return
+    for k, v in events.items():
+        logging.info(f'{k} = ')
+        logging.info(pformat(v.time))
 
-    driver = init_driver()
 
-    login_page = LoginPage(driver)
-    login_page.get_login_page()
-    login_page.input_username(config.get_username())
-    login_page.input_password(config.get_password())
-    login_page.click_login_button()
-    
     ipdb.set_trace() # IPDB
 
-
-def init_driver():
+def get_driver():
     options = webdriver.ChromeOptions()
     prefs = {
         'profile.default_content_setting_values': {
@@ -56,6 +61,61 @@ def init_driver():
     driver_path = os.path.join(dirs.DRIVER, 'chromedriver')
     driver = webdriver.Chrome(driver_path, options=options)
     return driver
+
+def login(driver):
+    login_page = LoginPage(driver)
+    login_page.get_login_page()
+    login_page.input_username(config.get_username())
+    login_page.input_password(config.get_password())
+    login_page.click_login_button()
+
+def get_events(driver):
+    camera_page = CameraPage(driver)
+    camera_page.get_camera_page(dirs.CAMERA_PLACE)
+    date_on_calendar = camera_page.get_date_on_calendar(DATE)
+    logging.info(date_on_calendar.get_attribute("class"))
+    if 'disabled' in date_on_calendar.get_attribute("class"):
+        logging.warning('There are no events on the date.')
+        return False
+    date_on_calendar.click()
+
+    motion_events = camera_page.get_motion_events()
+    if not motion_events:
+        logging.warning('There are no motion events on the date.')
+        return False
+    
+    events = {}
+    for index, ev in enumerate(motion_events):
+        event_time = ev.get_attribute('innerText')[4:]
+        data = {'time': datetime.strptime(event_time, "\n\n%Y/%m/%d\n\n%H:%M:%S")}
+        events[index] = EventHelper(**data)
+    return events
+
+"""
+
+4. Return a dict of objects:
+
+   - TODO Refine this.
+   - Export this as yaml (or json)?
+
+   ```
+   events = {
+      0: {
+         time: datetime,
+        requested: bool = False
+        empty_once: bool = False
+        empty_twice: bool = False
+
+        generated: bool = False
+        downloaded: bool = False
+        renamed: bool = False
+        uploaded: bool = False
+        erased: bool = False
+      },
+      1: ...
+   }
+   ```
+"""
 
 if __name__ == "__main__":
     main()
