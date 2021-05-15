@@ -25,15 +25,15 @@ class CameraPage(BasePage):
         dateTitle_actual = \
             self.find_element(self._locators.DATE_TITLE).get_attribute("innerText")
 
-        logging.info(f'{dateTitle_expect = }')
-        logging.info(f'{dateTitle_actual = }')
+        logging.info(f'dateTitle_expect = {dateTitle_expect}')
+        logging.info(f'dateTitle_actual = {dateTitle_actual}')
         while dateTitle_expect != dateTitle_actual:
             self.click_element(self._locators.PREVIOUS_MONTH)
             logging.info(f'Click last month.')
             dateTitle_actual = \
                 self.find_element(self._locators.DATE_TITLE).get_attribute("innerText")
-            logging.info(f'{dateTitle_actual = }')
-        logging.info(f'{(dateTitle_expect == dateTitle_actual) = }')
+            logging.info(f'dateTitle_actual = {dateTitle_actual}')
+        logging.info(f'(dateTitle_expect == dateTitle_actual) = {(dateTitle_expect == dateTitle_actual)}')
 
         date_on_calendar = \
             self.find_element(self._locators.DATE_ON_CALENDAR(date=date))

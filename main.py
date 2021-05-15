@@ -2,6 +2,7 @@ import os
 import sys
 from datetime import datetime, timedelta
 import logging
+from typing import Dict
 
 import ipdb
 
@@ -35,12 +36,10 @@ def main():
     driver = get_driver()
     login(driver)
     events = get_events(driver)
+    logging.info('\n' + pformat(events))
     if not events:
         driver.quit()
         return
-    for k, v in events.items():
-        logging.info(f'{k} = ')
-        logging.info(pformat(v.time))
 
 
     ipdb.set_trace() # IPDB
@@ -69,26 +68,29 @@ def login(driver):
     login_page.input_password(config.get_password())
     login_page.click_login_button()
 
-def get_events(driver):
+def get_events(driver) -> Dict[int, EventHelper]:
+    events = {}
     camera_page = CameraPage(driver)
     camera_page.get_camera_page(dirs.CAMERA_PLACE)
     date_on_calendar = camera_page.get_date_on_calendar(DATE)
     logging.info(date_on_calendar.get_attribute("class"))
+    logging.info('The day of the date is:')
+    logging.info(date_on_calendar.get_attribute("innerText"))
     if 'disabled' in date_on_calendar.get_attribute("class"):
         logging.warning('There are no events on the date.')
-        return False
+        return events
     date_on_calendar.click()
 
     motion_events = camera_page.get_motion_events()
     if not motion_events:
         logging.warning('There are no motion events on the date.')
-        return False
+        return events
     
-    events = {}
     for index, ev in enumerate(motion_events):
-        event_time = ev.get_attribute('innerText')[4:]
-        data = {'time': datetime.strptime(event_time, "\n\n%Y/%m/%d\n\n%H:%M:%S")}
-        events[index] = EventHelper(**data)
+        ev_text = ev.get_attribute('innerText')[4:]
+        ev_time = datetime.strptime(ev_text, "\n\n%Y/%m/%d\n\n%H:%M:%S")
+        events[index] = EventHelper(**{'time':ev_time})
+
     return events
 
 """

@@ -10,7 +10,7 @@ class DirectoryHelper(BaseModel):
     DATE: Optional[datetime]
     CAMERA_PLACE: str
     HOME = os.environ['HOME']
-    PWD = os.environ['PWD']
+    PWD = os.getcwd()
     DRIVER: str = ''
     DOWNLOADS: str = ''
     UNRENAMED: str = ''

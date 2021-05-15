@@ -59,15 +59,15 @@
       0: {
          time: datetime,
 
-         requested: bool = False
-         empty_once: bool = False
-         empty_twice: bool = False
+         requested= 0
+         empty_once= 0
+         empty_twice= 0
 
-         generated: bool = False
-         downloaded: bool = False
-         renamed: bool = False
-         uploaded: bool = False
-         erased: bool = False
+         generated= 0
+         downloaded= 0
+         renamed= 0
+         uploaded= 0
+         erased= 0
       },
       1: ...
    }
