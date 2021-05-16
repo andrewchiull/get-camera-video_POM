@@ -20,9 +20,8 @@ class CameraPage(BasePage):
         url = 'https://www.myspotcam.com/tc/myspotcam/'
         self.get_page(url)
         self.click_element(self._locators.CAMERA_PAGE[camera_place])
-        self.wait_page_until_loading()
-        self.remove_element(self.find_element(self._locators.STREAM))
         self.click_element(self._locators.PAUSE_BTN)
+        self.remove_element(self.find_element(self._locators.STREAM))
     
     def check_month_and_year_on_calendar(self) -> bool:
         self.click_element(self._locators.CALENDAR_BOX)
