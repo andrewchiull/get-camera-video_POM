@@ -35,7 +35,7 @@ config = ConfigHelper(config_path)
 def main():
     driver = get_driver()
     login(driver)
-    events = get_events(driver)
+    events = get_events(driver, DATE)
     logging.info('\n' + pformat(events))
     if not events:
         logging.warning('There are no events on the date.')
@@ -72,13 +72,13 @@ def login(driver):
     login_page.input_password(config.get_password())
     login_page.click_login_button()
 
-def get_events(driver) -> Dict[int, EventHelper]:
-    camera_page = CameraPage(driver)
+def get_events(driver, date) -> Dict[int, EventHelper]:
+    camera_page = CameraPage(driver, date)
     camera_page.get_camera_page(dirs.CAMERA_PLACE)
-    if not camera_page.check_month_and_year_on_calendar(DATE):
+    if not camera_page.check_month_and_year_on_calendar():
         logging.warning('The date is too long ago from now.')
         return {}
-    if not camera_page.check_day_on_calendar(DATE):
+    if not camera_page.check_day_on_calendar():
         logging.warning('There are not any kinds of events on the date.')
         return {}
 

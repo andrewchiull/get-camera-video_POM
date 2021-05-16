@@ -1,6 +1,7 @@
 import time
 import logging
 from datetime import datetime
+from typing import Optional
 
 from spotcam_utils.base_page import BasePage
 from spotcam_utils.pages.camera_page_locators import CameraPageLocators
@@ -11,6 +12,10 @@ class CameraPage(BasePage):
 
     _locators = CameraPageLocators()
 
+    def __init__(self, driver, date):
+        super().__init__(driver)
+        self.date: Optional[datetime] = date
+
     def get_camera_page(self, camera_place):
         url = 'https://www.myspotcam.com/tc/myspotcam/'
         self.get_page(url)
@@ -19,9 +24,9 @@ class CameraPage(BasePage):
         self.remove_element(self.find_element(self._locators.STREAM))
         self.click_element(self._locators.PAUSE_BTN)
     
-    def check_month_and_year_on_calendar(self, date: datetime) -> bool:
+    def check_month_and_year_on_calendar(self) -> bool:
         self.click_element(self._locators.CALENDAR_BOX)
-        month_year_expect = date.strftime('%B , %Y')
+        month_year_expect = self.date.strftime('%B , %Y')
         CHECK_TIMES = 3
 
         for _ in range(CHECK_TIMES):
@@ -38,15 +43,15 @@ class CameraPage(BasePage):
 
         return False
 
-    def check_day_on_calendar(self, date: datetime):
+    def check_day_on_calendar(self):
         date_on_calendar = \
-            self.find_element(self._locators.DATE_ON_CALENDAR(date=date))
+            self.find_element(self._locators.DATE_ON_CALENDAR(date=self.date))
 
         logging.info(f'The day of the date = {date_on_calendar.get_attribute("innerText")}')
         logging.info(f'The class name of the date = {date_on_calendar.get_attribute("class")}')
         if 'disabled' in date_on_calendar.get_attribute("class"):
             return False
-        self.click_element(self._locators.DATE_ON_CALENDAR(date=date))
+        self.click_element(self._locators.DATE_ON_CALENDAR(date=self.date))
         return True
 
     def get_motion_events(self) -> list:
