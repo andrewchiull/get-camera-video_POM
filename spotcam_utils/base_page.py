@@ -15,7 +15,7 @@ class BasePage:
 
         self.driver.implicitly_wait(self.implicitly_wait_timeout)
         self.set_explicit_wait_timeout(self.explicit_wait_timeout)
-        self.driver.maximize_window()
+        # self.driver.maximize_window()
 
     def set_explicit_wait_timeout(self, timeout: int):
         self.wait = WebDriverWait(self.driver, timeout)

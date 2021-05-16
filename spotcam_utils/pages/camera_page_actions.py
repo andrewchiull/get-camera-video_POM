@@ -19,25 +19,35 @@ class CameraPage(BasePage):
         self.remove_element(self.find_element(self._locators.STREAM))
         self.click_element(self._locators.PAUSE_BTN)
     
-    def get_date_on_calendar(self, date: datetime):
+    def check_month_and_year_on_calendar(self, date: datetime) -> bool:
         self.click_element(self._locators.CALENDAR_BOX)
-        dateTitle_expect = date.strftime('%B , %Y')
-        dateTitle_actual = \
-            self.find_element(self._locators.DATE_TITLE).get_attribute("innerText")
+        month_year_expect = date.strftime('%B , %Y')
+        CHECK_TIMES = 3
 
-        logging.info(f'dateTitle_expect = {dateTitle_expect}')
-        logging.info(f'dateTitle_actual = {dateTitle_actual}')
-        while dateTitle_expect != dateTitle_actual:
-            self.click_element(self._locators.PREVIOUS_MONTH)
-            logging.info(f'Click last month.')
-            dateTitle_actual = \
+        for _ in range(CHECK_TIMES):
+            month_year_actual = \
                 self.find_element(self._locators.DATE_TITLE).get_attribute("innerText")
-            logging.info(f'dateTitle_actual = {dateTitle_actual}')
-        logging.info(f'(dateTitle_expect == dateTitle_actual) = {(dateTitle_expect == dateTitle_actual)}')
+            logging.info(f'month_year_expect = {month_year_expect}')
+            logging.info(f'month_year_actual = {month_year_actual}')
 
+            if month_year_expect == month_year_actual:
+                return True
+            else:
+                logging.info(f'Click last month.')
+                self.click_element(self._locators.PREVIOUS_MONTH)
+
+        return False
+
+    def check_day_on_calendar(self, date: datetime):
         date_on_calendar = \
             self.find_element(self._locators.DATE_ON_CALENDAR(date=date))
-        return date_on_calendar
+
+        logging.info(f'The day of the date = {date_on_calendar.get_attribute("innerText")}')
+        logging.info(f'The class name of the date = {date_on_calendar.get_attribute("class")}')
+        if 'disabled' in date_on_calendar.get_attribute("class"):
+            return False
+        self.click_element(self._locators.DATE_ON_CALENDAR(date=date))
+        return True
 
     def get_motion_events(self) -> list:
         self.click_element(self._locators.EVENT_LIST)

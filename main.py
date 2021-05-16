@@ -38,6 +38,8 @@ def main():
     events = get_events(driver)
     logging.info('\n' + pformat(events))
     if not events:
+        logging.warning('There are no events on the date.')
+        logging.warning('Driver quits.')
         driver.quit()
         return
 
@@ -53,12 +55,14 @@ def get_driver():
         'download.default_directory': dirs.UNRENAMED
     }
     options.add_experimental_option('prefs', prefs)
-    options.add_argument('--start-fullscreen')
+    # options.add_argument('--start-fullscreen')
     # options.headless = True # TEST headless mode
 
     sys.path.append(dirs.DRIVER)
     driver_path = os.path.join(dirs.DRIVER, 'chromedriver')
     driver = webdriver.Chrome(driver_path, options=options)
+    driver.set_window_size(1024, 768)
+    # driver.maximize_window()
     return driver
 
 def login(driver):
@@ -69,23 +73,21 @@ def login(driver):
     login_page.click_login_button()
 
 def get_events(driver) -> Dict[int, EventHelper]:
-    events = {}
     camera_page = CameraPage(driver)
     camera_page.get_camera_page(dirs.CAMERA_PLACE)
-    date_on_calendar = camera_page.get_date_on_calendar(DATE)
-    logging.info(date_on_calendar.get_attribute("class"))
-    logging.info('The day of the date is:')
-    logging.info(date_on_calendar.get_attribute("innerText"))
-    if 'disabled' in date_on_calendar.get_attribute("class"):
-        logging.warning('There are no events on the date.')
-        return events
-    date_on_calendar.click()
+    if not camera_page.check_month_and_year_on_calendar(DATE):
+        logging.warning('The date is too long ago from now.')
+        return {}
+    if not camera_page.check_day_on_calendar(DATE):
+        logging.warning('There are not any kinds of events on the date.')
+        return {}
 
     motion_events = camera_page.get_motion_events()
     if not motion_events:
         logging.warning('There are no motion events on the date.')
-        return events
+        return {}
     
+    events = {}
     for index, ev in enumerate(motion_events):
         ev_text = ev.get_attribute('innerText')[4:]
         ev_time = datetime.strptime(ev_text, "\n\n%Y/%m/%d\n\n%H:%M:%S")
@@ -97,26 +99,6 @@ def get_events(driver) -> Dict[int, EventHelper]:
 
 4. Return a dict of objects:
 
-   - TODO Refine this.
-   - Export this as yaml (or json)?
-
-   ```
-   events = {
-      0: {
-         time: datetime,
-        requested: bool = False
-        empty_once: bool = False
-        empty_twice: bool = False
-
-        generated: bool = False
-        downloaded: bool = False
-        renamed: bool = False
-        uploaded: bool = False
-        erased: bool = False
-      },
-      1: ...
-   }
-   ```
 """
 
 if __name__ == "__main__":

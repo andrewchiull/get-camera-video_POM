@@ -3,14 +3,14 @@ from datetime import datetime
 import logging
 from typing import Optional, Any
 
-from pydantic import BaseModel
+from pydantic import BaseSettings
 
-class DirectoryHelper(BaseModel):
-
-    DATE: Optional[datetime]
+class DirectoryHelper(BaseSettings):
+    # BaseSettings determines the values by reading from the environment
+    HOME: str
+    PWD: str
     CAMERA_PLACE: str
-    HOME = os.environ['HOME']
-    PWD = os.getcwd()
+    DATE: Optional[datetime] = datetime.now()
     DRIVER: str = ''
     DOWNLOADS: str = ''
     UNRENAMED: str = ''
