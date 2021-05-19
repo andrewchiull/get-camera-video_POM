@@ -1,9 +1,11 @@
 import time
 import logging
+from typing import List
 
 from selenium.webdriver.support import expected_conditions as ec
 from selenium.webdriver.support.ui import WebDriverWait
-
+from selenium.webdriver.support.ui import Select
+from selenium.webdriver.remote.webelement import WebElement
 
 class BasePage:
 
@@ -28,12 +30,12 @@ class BasePage:
         logging.info("Quit driver")
         self.driver.quit()
 
-    def find_element(self, locator: tuple):
+    def find_element(self, locator: tuple) -> WebElement:
         logging.debug("Find Element: %s", locator)
         _element = self.wait.until(ec.presence_of_element_located(locator))
         return _element
 
-    def find_elements(self, locator: tuple) -> list:
+    def find_elements(self, locator: tuple) -> List[WebElement]:
         logging.debug("Find Element: %s", locator)
         self.wait.until(ec.presence_of_element_located(locator))
         return self.driver.find_elements(*locator)
@@ -125,7 +127,8 @@ class BasePage:
         logging.debug("<<< Wait page loading spend time %s", elapsedtime)
 
     def remove_element(self, element):
-        """[summary] Delete the element from the website.
+        """
+        Delete the element from the website.
 
         Args:
             element (WebElement)
@@ -135,3 +138,6 @@ class BasePage:
             let element = arguments[0];
             element.parentNode.removeChild(element);
             """, element)
+
+    def select(self, locator: tuple, target: str):
+        Select(self.find_element(locator)).select_by_visible_text(target)

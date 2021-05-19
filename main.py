@@ -3,6 +3,7 @@ import sys
 from datetime import datetime, timedelta
 import logging
 from typing import Dict
+from pprint import pprint, pformat
 
 import ipdb
 
@@ -13,7 +14,7 @@ from spotcam_utils.pages.login_page_actions import LoginPage
 from spotcam_utils.pages.camera_page_actions import CameraPage
 from spotcam_utils.config_helper import ConfigHelper
 from spotcam_utils.event_helper import EventHelper
-from pprint import pprint, pformat
+from spotcam_utils.event_helper import Status
 
 class Main:
     def __init__(self):
@@ -26,17 +27,26 @@ class Main:
 
     def main(self):
         self.driver = self.get_driver()
-        self.login(self.driver, self.config)
-        self.events = self.get_events(self.driver, self.DATE, self.dirs)
+        self.login()
+        self.events = self.get_events()
         logging.info('\n' + pformat(self.events))
         if not self.events:
-            logging.warning('There are no events on the date.')
-            logging.warning('Driver quits.')
+            logging.warning('There are no events on the date. Driver quits.')
             self.driver.quit()
-            return
 
+        # ipdb.set_trace() # IPDB
+        ROUNDS = 5
+        for ROUND in range(ROUNDS):
+            self.request_videos()
+
+            if all(self.events[i].status >= Status.REQUEST_DOING for i in self.events):
+                self.log_title('[ Whole process finished ]')
+                break
 
         ipdb.set_trace() # IPDB
+
+    def log_title(self, msg):
+        logging.info(f'{msg:=^60}')
 
     def get_driver(self):
         options = webdriver.ChromeOptions()
@@ -57,16 +67,16 @@ class Main:
         # driver.maximize_window()
         return driver
 
-    def login(self, driver, config):
-        login_page = LoginPage(driver)
+    def login(self):
+        login_page = LoginPage(self.driver)
         login_page.get_login_page()
-        login_page.input_username(config.get_username())
-        login_page.input_password(config.get_password())
+        login_page.input_username(self.config.get_username())
+        login_page.input_password(self.config.get_password())
         login_page.click_login_button()
 
-    def get_events(self, driver, date, dirs) -> Dict[int, EventHelper]:
-        camera_page = CameraPage(driver, date)
-        camera_page.get_camera_page(dirs.CAMERA_PLACE)
+    def get_events(self) -> Dict[int, EventHelper]:
+        camera_page = CameraPage(self.driver, self.DATE)
+        camera_page.get_camera_page(self.dirs.CAMERA_PLACE)
         if not camera_page.check_month_and_year_on_calendar():
             logging.warning('The date is too long ago from now.')
             return {}
@@ -79,19 +89,28 @@ class Main:
             logging.warning('There are no motion events on the date.')
             return {}
         
+        motion_events = motion_events[:3] # TEST Use first 5 event
+
         events = {}
         for index, ev in enumerate(motion_events):
             ev_text = ev.get_attribute('innerText')[4:]
             ev_time = datetime.strptime(ev_text, "\n\n%Y/%m/%d\n\n%H:%M:%S")
-            events[index] = EventHelper(**{'time':ev_time})
+            events[index] = EventHelper(**{'timestamp':ev_time})
 
         return events
 
-"""
+    def request_videos(self):
+        camera_page = CameraPage(self.driver, self.DATE)
+        camera_page.get_camera_page(self.dirs.CAMERA_PLACE)
+        for key, ev in self.events.items():
+            logging.info('')
+            logging.info(f'Requesting: {key: 2}: {self.events[key]}')
+            if ev.status >= Status.GENERATE_DONE:
+                continue # Skip the generated events
+            camera_page.request_video(ev.timestamp)
+            ev.status = camera_page.read_alert_message(ev.status)
+            logging.info(f'Result: {key: 2}: {self.events[key]}')
 
-4. Return a dict of objects:
-
-"""
 
 def main():
     m = Main()
