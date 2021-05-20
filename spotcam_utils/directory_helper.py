@@ -6,16 +6,18 @@ from typing import Optional, Any
 from pydantic import BaseSettings
 
 class DirectoryHelper(BaseSettings):
+    CAMERA_NAME: str
+    DATE: Optional[datetime] = datetime.now()
+
     # BaseSettings determines the values by reading from the environment
     HOME: str
     PWD: str
-    CAMERA_PLACE: str
-    DATE: Optional[datetime] = datetime.now()
+
     DRIVER: str = ''
     DOWNLOADS: str = ''
     UNRENAMED: str = ''
     RENAMED: str = ''
-
+    FTP: dict = {}
 
     def __init__(self, **data: Any):
         super().__init__(**data)
@@ -33,8 +35,14 @@ class DirectoryHelper(BaseSettings):
 
         date_str = self.DATE.strftime('%Y-%m-%d')
         self.RENAMED = os.path.join(
-            self.DOWNLOADS, f'{self.CAMERA_PLACE}_{date_str}')
+            self.DOWNLOADS, f'{self.CAMERA_NAME}_{date_str}')
         if not os.path.exists(self.RENAMED):
             os.mkdir(self.RENAMED)
             logging.info(f'mkdir: {self.RENAMED}')
 
+        self.FTP = {
+            'BIME-YunLin':
+                '/Lab303/01_研究計畫案/110_防檢局_利用自動化監測建立果實蠅非疫生產點/監測資料/大門出入影片/雲林斗六',
+            'BIME-ChiaYi':
+                '/Lab303/01_研究計畫案/110_防檢局_利用自動化監測建立果實蠅非疫生產點/監測資料/大門出入影片/嘉義太保',
+        }

@@ -18,15 +18,16 @@ class CameraPage(BasePage):
         super().__init__(driver)
         self.date: Optional[datetime] = date
 
-    def get_camera_page(self, camera_place):
+    def get_camera_page(self, camera_name: str):
         url = 'https://www.myspotcam.com/tc/myspotcam/'
         self.get_page(url)
-        self.click_element(self._locators.CAMERA_PAGE[camera_place])
+        self.click_element(self._locators.CAMERA_PAGE(camera_name))
         self.click_element(self._locators.PAUSE_BTN)
         self.remove_element(self.find_element(self._locators.STREAM))
 
     def check_month_and_year_on_calendar(self) -> bool:
         self.click_element(self._locators.CALENDAR_BOX)
+        self.wait_page_until_loading()
         month_year_expect = self.date.strftime('%B , %Y')
         CHECK_TIMES = 3
 
@@ -42,6 +43,8 @@ class CameraPage(BasePage):
             else:
                 logging.info(f'Click last month.')
                 self.click_element(self._locators.PREVIOUS_MONTH)
+                self.wait_page_until_loading()
+
 
         return False
 
@@ -60,14 +63,18 @@ class CameraPage(BasePage):
 
     def get_motion_events(self) -> list:
         self.click_element(self._locators.EVENT_LIST)
+        self.wait_page_until_loading()
         self.click_element(self._locators.SLIDE_OF_EVENT_LIST)
+        self.wait_page_until_loading()
         self.click_element(self._locators.MOTION_EVENT_LIST)
+        self.wait_page_until_loading()
         motion_events = self.find_elements(self._locators.MOTION_EVENT)
         motion_events.reverse()
         return motion_events
 
-    def request_video(self, timestamp=datetime):
+    def request_video(self, timestamp: datetime):
         self.click_element(self._locators.REQUEST_VIDEOS)
+        self.wait_page_until_loading()
         options = {
             'year': timestamp.strftime('%Y'),
             'month': timestamp.strftime('%m'),
@@ -92,12 +99,14 @@ class CameraPage(BasePage):
                 self.find_element(self._locators.RESULT_LENGTH).get_attribute('innerText'))
 
         self.click_element(self._locators.OK_BTN)
+        self.wait_page_until_loading()
 
     def read_alert_message(self, status_old) -> Status:
         message = self.find_element(
             self._locators.ALERT_BOX).get_attribute('innerText')
         logging.info(f'Alert message: {message}')
         self.click_element(self._locators.ACCEPT_BTN)
+        self.wait_page_until_loading()
 
         if message == '您的影片正在製作中，製作完成後將會顯示在您的「我的影片」頁面中。':
             logging.info(f'影片已要求。')

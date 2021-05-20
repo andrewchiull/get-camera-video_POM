@@ -9,11 +9,21 @@ class ConfigHelper:
     def _read_config(config_path):
         return read_yaml_file(config_path)
 
-    # def get_firefix_binary_path(self):
-    #     return self.config["firefox_binary"]
-
     def get_username(self):
         return self.config["username"]
 
     def get_password(self):
         return self.config["password"]
+
+    # for FTP
+    def get_FTPIP(self):
+        return self.config["FTPIP"]
+
+    def get_FTPPORT(self):
+        return self.config["FTPPORT"]
+
+    def get_USERNAME(self):
+        return self.config["USERNAME"]
+
+    def get_USERPWD(self):
+        return self.config["USERPWD"]

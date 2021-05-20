@@ -4,6 +4,9 @@
         // "./example_official", 
         // "./spotcam_utils"
     ],
+    "todo-tree.tree.disableCompactFolders": false,
+    "todo-tree.tree.showBadges": true,
+    "todo-tree.tree.scanMode": "open files",
     // "python.linting.pylintArgs": [
     //     "--errors-only",
     //     "--disable=E0401"

@@ -7,7 +7,7 @@
   - `UNRENAMED`
   - `RENAMED`
 
-- `CAMERA_PLACE` = 'Chiayi' or 'Yunlin'
+- `location` = 'Chiayi' or 'Yunlin'
 - `browser` = 'chrome'
 - `os` = 'ubuntu'
 

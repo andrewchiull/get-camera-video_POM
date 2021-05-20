@@ -4,10 +4,7 @@ from datetime import datetime
 
 class CameraPageLocators:
     # locators
-    CAMERA_PAGE = {
-        'Chiayi': (By.XPATH, f'//a[@title="BIME-ChiaYi"]'),
-        'Yunlin': (By.XPATH, f'//a[@title="BIME-YunLin"]')
-    }
+    
     STREAM = (By.XPATH, '//*[@class="divide divide1 active"]')
     PAUSE_BTN = (By.XPATH, '//*[@class="controlBtn pauseBtn"]')
     CALENDAR_BOX = (By.XPATH, '//*[@class="calendarBox"]')
@@ -25,6 +22,9 @@ class CameraPageLocators:
 
     ALERT_BOX = (By.XPATH, '//*[@id="alertCustomised"]//*[@class="alert-box"]/p')
     ACCEPT_BTN = (By.XPATH, '//*[@id="alertCustomised"]//*[@class="btn btn-blue btnClose"]')
+
+    def CAMERA_PAGE(self, camera_name):
+        return (By.XPATH, f'//a[@title="{camera_name}"]')
 
     def DATE_ON_CALENDAR(self, date: datetime):
         return (By.XPATH, f'//*[@id="days"]/li/span[text()="{date.day}"]/..')

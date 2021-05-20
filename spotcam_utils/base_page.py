@@ -12,8 +12,8 @@ class BasePage:
     def __init__(self, driver):
         self.wait = None
         self.driver = driver
-        self.implicitly_wait_timeout = 15
-        self.explicit_wait_timeout = 60
+        self.implicitly_wait_timeout = 2
+        self.explicit_wait_timeout = 5
 
         self.driver.implicitly_wait(self.implicitly_wait_timeout)
         self.set_explicit_wait_timeout(self.explicit_wait_timeout)
@@ -37,14 +37,24 @@ class BasePage:
 
     def find_elements(self, locator: tuple) -> List[WebElement]:
         logging.debug("Find Element: %s", locator)
-        self.wait.until(ec.presence_of_element_located(locator))
-        return self.driver.find_elements(*locator)
+        try:
+            self.wait.until(ec.presence_of_element_located(locator))
+            return self.driver.find_elements(*locator)
+        except Exception:
+            return []
 
     def click_element(self, locator: tuple):
-        logging.info("Click Element: %s", locator)
+        logging.debug("Click Element: %s", locator)
         _element = self.wait.until(ec.element_to_be_clickable(locator))
         _element.click()
-        self.wait_page_until_loading()
+        # self.wait_page_until_loading()
+
+    def wait_and_accept_alert(self):
+        self.wait.until(ec.alert_is_present())
+        alert = self.driver.switch_to.alert
+        logging.info(f'Alert: {alert.text}')
+        alert.accept()
+
 
     def wait_for_browser_title(self, exp_title: str, timeout=60):
         for _ in range(timeout):
@@ -133,7 +143,7 @@ class BasePage:
         Args:
             element (WebElement)
         """        
-        # TEST "arguments[0]" in js will be replaced by element in python
+        # "arguments[0]" in js will be relocationd by element in python
         self.driver.execute_script(r"""
             let element = arguments[0];
             element.parentNode.removeChild(element);
