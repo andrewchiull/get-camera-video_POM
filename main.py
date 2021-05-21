@@ -20,9 +20,9 @@ from spotcam_utils.pages.video_page_actions import VideoPage
 
 
 class Main:
-    def __init__(self, date):
-        # self.LOCATION = 'Chiayi'
-        self.LOCATION = 'Yunlin'
+    def __init__(self, date, location):
+        # self.LOCATION = 'Chiayi' or 'Yunlin'
+        self.LOCATION: str = location
         self.CAMERA_NAME = {
             'Yunlin': 'BIME-YunLin',
             'Chiayi': 'BIME-ChiaYi'
@@ -46,8 +46,7 @@ class Main:
         self.events = self.get_events()
         if not self.events:
             logging.warning('There are no events on the date. Driver quits.')
-            self.upload_empty_txt()
-            self.driver.quit()
+            # self.upload_empty_txt() # TEST Do not upload empty txt
             return
         logging.info('\n' + pformat(self.events))
 
@@ -55,7 +54,7 @@ class Main:
         self.check_all_status()
 
         # ipdb.set_trace() # IPDB
-        RETRY_TIMES = 5
+        RETRY_TIMES = 10
         for i in range(RETRY_TIMES):
             try:
                 self.log_title(f'Round {i}: Requesting')
@@ -73,7 +72,6 @@ class Main:
                 self.log_title('')
                 logging.info('')
                 return
-
         # ipdb.set_trace()  # IPDB
 
     def get_driver(self):
@@ -244,19 +242,18 @@ class Main:
 
 def main():
     date = datetime.now() - timedelta(days=1)
-    m = Main(date=date)
-    m.main()
+    Yunlin = Main(date=date, location='Yunlin')
+    Yunlin.main()
+    Yunlin.driver.quit()
 
-    # for i in range(6):
-    #     date = datetime.now().replace(month=4, day=27) - timedelta(days=i+1)
-    #     m = Main(date=date)
-    #     m.main()
+    Chiayi = Main(date=date, location='Chiayi')
+    Chiayi.main()
+    Chiayi.driver.quit()
 
 if __name__ == "__main__":
     logging.basicConfig(
         format='%(asctime)s %(levelname)s | %(message)s',
-        level=logging.INFO,
-        # level=logging.DEBUG
+        level=logging.INFO
     )
 
     main()
