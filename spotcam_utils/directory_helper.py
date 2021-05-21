@@ -1,4 +1,5 @@
 import os
+import sys
 from datetime import datetime
 import logging
 from typing import Optional, Any
@@ -18,10 +19,15 @@ class DirectoryHelper(BaseSettings):
     UNRENAMED: str = ''
     RENAMED: str = ''
     FTP: dict = {}
-
+    os = {
+        'darwin': 'macos',
+        'linux': 'linux'
+    }
     def __init__(self, **data: Any):
         super().__init__(**data)
-        self.DRIVER = os.path.join(self.PWD, 'spotcam_utils/browser_driver')
+
+        self.DRIVER = os.path.join(
+            self.PWD, 'spotcam_utils/browser_driver', self.os[sys.platform])
 
         self.DOWNLOADS = os.path.join(self.HOME, 'Downloads')
         if not os.path.exists(self.DOWNLOADS):
