@@ -6,6 +6,9 @@ from typing import Optional, Any
 
 from pydantic import BaseSettings
 
+from spotcam_utils.config_helper import ConfigHelper
+
+
 class DirectoryHelper(BaseSettings):
     CAMERA_NAME: str
     DATE: Optional[datetime] = datetime.now()
@@ -47,8 +50,6 @@ class DirectoryHelper(BaseSettings):
             logging.info(f'mkdir: {self.RENAMED}')
 
         self.FTP = {
-            'BIME-YunLin':
-                '/Lab303/01_研究計畫案/110_防檢局_利用自動化監測建立果實蠅非疫生產點/監測資料/大門出入影片/雲林斗六',
-            'BIME-ChiaYi':
-                '/Lab303/01_研究計畫案/110_防檢局_利用自動化監測建立果實蠅非疫生產點/監測資料/大門出入影片/嘉義太保',
+            'BIME-YunLin': os.path.join(ConfigHelper.get_FTPDIR(), '雲林斗六'),
+            'BIME-ChiaYi': os.path.join(ConfigHelper.get_FTPDIR(), '嘉義太保')
         }

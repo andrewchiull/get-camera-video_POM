@@ -7,6 +7,7 @@
     "todo-tree.tree.disableCompactFolders": false,
     "todo-tree.tree.showBadges": true,
     "todo-tree.tree.scanMode": "open files",
+    "python.pythonPath": "/Users/andrewchiu/.pyenv/versions/3.8.1/envs/selenium/bin/python",
     // "python.linting.pylintArgs": [
     //     "--errors-only",
     //     "--disable=E0401"

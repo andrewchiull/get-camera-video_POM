@@ -28,7 +28,7 @@ class Main:
             'Chiayi': 'BIME-ChiaYi'
         }
         self.DATE = date
-        # self.DATE = self.DATE.replace(year=2021, month=4, day=26) # TEST given date
+        self.DATE = self.DATE.replace(year=2021, month=6, day=23) # TEST given date
         self.dirs = DirectoryHelper(
             DATE=self.DATE, CAMERA_NAME=self.CAMERA_NAME[self.LOCATION])
         self.config = ConfigHelper(os.path.join(self.dirs.PWD, 'config.yaml'))
@@ -46,19 +46,17 @@ class Main:
         self.events = self.get_events()
         if not self.events:
             logging.warning('There are no events on the date. Driver quits.')
-            # self.upload_empty_txt() # TEST Do not upload empty txt
             return
         logging.info('\n' + pformat(self.events))
 
-        self.log_title(f'Check all status')
-        self.check_all_status()
+        self.log_title(f'Check is able to skip')
+        self.check_is_able_to_skip()
 
-        # ipdb.set_trace() # IPDB
         RETRY_TIMES = 10
         for i in range(RETRY_TIMES):
             try:
                 self.log_title(f'Round {i}: Requesting')
-                self.request_videos() # TEST skip request
+                self.request_videos() # TEST_TURNING_OFF skip request
                 logging.info('\n' + pformat(self.events))
 
                 self.log_title(f'Round {i}: Downloading')
@@ -72,7 +70,6 @@ class Main:
                 self.log_title('')
                 logging.info('')
                 return
-        # ipdb.set_trace()  # IPDB
 
     def get_driver(self):
         options = webdriver.ChromeOptions()
@@ -84,7 +81,7 @@ class Main:
         }
         options.add_experimental_option('prefs', prefs)
         # options.add_argument('--start-fullscreen')
-        options.headless = True # TEST headless mode
+        # options.headless = True # TEST headless mode
 
         sys.path.append(self.dirs.DRIVER)
         driver_path = os.path.join(self.dirs.DRIVER, 'chromedriver')
@@ -125,7 +122,7 @@ class Main:
 
         return events
 
-    def check_all_status(self):
+    def check_is_able_to_skip(self):
         video_page = VideoPage(
             self.driver, self.dirs, self.config, self.CAMERA_NAME[self.LOCATION])
         logging.info('')
@@ -208,6 +205,8 @@ class Main:
             self.log_status(key)
             logging.info('')
 
+    # deprecated
+    """
     def upload_empty_txt(self):
         video_page = VideoPage(
             self.driver, self.dirs, self.config, self.CAMERA_NAME[self.LOCATION])
@@ -220,7 +219,7 @@ class Main:
         f.close()
         video_page.upload_txt(events_txt_path, events_txt_filename)
         return video_page
-            # ipdb.set_trace()  # IPDB
+    """
 
     def log_title(self, msg, level=logging.INFO):
         msg = f'[ {msg} ]'

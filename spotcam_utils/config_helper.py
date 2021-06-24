@@ -27,3 +27,6 @@ class ConfigHelper:
 
     def get_USERPWD(self):
         return self.config["USERPWD"]
+
+    def get_FTPDIR(self):
+        return self.config["FTPDIR"]
