@@ -26,7 +26,6 @@ class DirectoryHelper(BaseSettings):
         'darwin': 'macos',
         'linux': 'linux'
     }
-    config = None
     def __init__(self, **data: Any):
         super().__init__(**data)
 
@@ -50,8 +49,8 @@ class DirectoryHelper(BaseSettings):
             os.mkdir(self.RENAMED)
             logging.info(f'mkdir: {self.RENAMED}')
 
-        self.config = ConfigHelper(os.path.join(self.PWD, 'config.yaml'))
+        config = ConfigHelper(os.path.join(self.PWD, 'config.yaml'))
         self.FTP = {
-            'BIME-YunLin': os.path.join(self.config.get_FTPDIR(), '雲林斗六'),
-            'BIME-ChiaYi': os.path.join(self.config.get_FTPDIR(), '嘉義太保')
+            'BIME-YunLin': os.path.join(config.get_FTPDIR(), '雲林斗六'),
+            'BIME-ChiaYi': os.path.join(config.get_FTPDIR(), '嘉義太保')
         }
