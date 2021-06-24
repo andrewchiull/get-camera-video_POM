@@ -35,22 +35,30 @@ class Main:
         self.ERR_COUNT = 0
 
     def main(self):
-        logging.info('')
-        self.log_title('')
-        self.log_title(f'Get videos from {self.CAMERA_NAME[self.LOCATION]}')
-        self.log_title(f'{self.DATE.date()}')
-        self.driver = self.get_driver()
-        self.log_title(f'Login')
-        self.login()
-        self.log_title(f'Get events')
-        self.events = self.get_events()
-        if not self.events:
-            logging.warning('There are no events on the date. Driver quits.')
-            return
-        logging.info('\n' + pformat(self.events))
+        RETRY_TIMES = 3
+        for i in range(RETRY_TIMES):
+            try:
+                logging.info('')
+                self.log_title('')
+                self.log_title(f'Get videos from {self.CAMERA_NAME[self.LOCATION]}')
+                self.log_title(f'{self.DATE.date()}')
+                self.driver = self.get_driver()
+                self.log_title(f'Login')
+                self.login()
+                self.log_title(f'Get events')
+                self.events = self.get_events()
+                if not self.events:
+                    logging.warning('There are no events on the date. Driver quits.')
+                    return
+                logging.info('\n' + pformat(self.events))
 
-        self.log_title(f'Check is able to skip')
-        self.check_is_able_to_skip()
+                self.log_title(f'Check is able to skip')
+                self.check_is_able_to_skip()
+                break
+            except Exception:
+                self.error_message()
+                continue
+
 
         RETRY_TIMES = 10
         for i in range(RETRY_TIMES):
