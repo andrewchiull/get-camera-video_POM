@@ -26,6 +26,7 @@ class DirectoryHelper(BaseSettings):
         'darwin': 'macos',
         'linux': 'linux'
     }
+    config = None
     def __init__(self, **data: Any):
         super().__init__(**data)
 
