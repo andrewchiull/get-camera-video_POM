@@ -9,7 +9,6 @@ from pydantic import BaseModel
 class Status(Enum):
     DEFAULT = 0
 
-    REQUEST_EMPTY_ONCE = 11
     GENERATE_FAILED = 19
 
     REQUEST_DOING = 20
@@ -21,7 +20,8 @@ class Status(Enum):
     DOWNLOAD_DONE = 40
 
     ALL_DONE = 100
-    REQUEST_EMPTY_TWICE = 101
+    REQUEST_EMPTY_ONCE = 101
+    REQUEST_EMPTY_TWICE = 102
 
     def __ge__(self, other):
         if self.__class__ is other.__class__:
