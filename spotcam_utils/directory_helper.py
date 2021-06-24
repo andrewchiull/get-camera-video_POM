@@ -49,7 +49,7 @@ class DirectoryHelper(BaseSettings):
             os.mkdir(self.RENAMED)
             logging.info(f'mkdir: {self.RENAMED}')
 
-        self.config = ConfigHelper()
+        self.config = ConfigHelper(os.path.join(self.PWD, 'config.yaml'))
         self.FTP = {
             'BIME-YunLin': os.path.join(self.config.get_FTPDIR(), '雲林斗六'),
             'BIME-ChiaYi': os.path.join(self.config.get_FTPDIR(), '嘉義太保')
