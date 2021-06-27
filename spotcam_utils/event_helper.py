@@ -19,8 +19,8 @@ class Status(Enum):
     DOWNLOAD_FAILED = 31
     DOWNLOAD_DONE = 40
 
+    REQUEST_EMPTY_ONCE = 91
     ALL_DONE = 100
-    REQUEST_EMPTY_ONCE = 101
     REQUEST_EMPTY_TWICE = 102
 
     def __ge__(self, other):
