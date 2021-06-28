@@ -89,7 +89,7 @@ class Main:
         }
         options.add_experimental_option('prefs', prefs)
         # options.add_argument('--start-fullscreen')
-        # options.headless = True # TEST headless mode
+        options.headless = True # TEST headless mode
 
         sys.path.append(self.dirs.DRIVER)
         driver_path = os.path.join(self.dirs.DRIVER, 'chromedriver')
@@ -182,7 +182,7 @@ class Main:
 
         for key, ev in self.events.items():
             self.log_status(key)
-            if ev.status >= Status.ALL_DONE:
+            if ev.status >= Status.ALL_DONE or ev.status == Status.REQUEST_EMPTY_ONCE:
                 continue  # Skip the completed or empty events
 
             video_page.get_video_page()

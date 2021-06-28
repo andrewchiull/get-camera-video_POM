@@ -9,6 +9,7 @@ from pydantic import BaseModel
 class Status(Enum):
     DEFAULT = 0
 
+    REQUEST_EMPTY_ONCE = 11
     GENERATE_FAILED = 19
 
     REQUEST_DOING = 20
@@ -19,7 +20,6 @@ class Status(Enum):
     DOWNLOAD_FAILED = 31
     DOWNLOAD_DONE = 40
 
-    REQUEST_EMPTY_ONCE = 91
     ALL_DONE = 100
     REQUEST_EMPTY_TWICE = 102
 
