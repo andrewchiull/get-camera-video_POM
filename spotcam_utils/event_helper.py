@@ -1,10 +1,7 @@
 import os
 from datetime import datetime
-import logging
-from typing import Optional, Any
+from typing import Optional
 from enum import Enum
-
-from pydantic import BaseModel
 
 class Status(Enum):
     DEFAULT = 0
@@ -40,12 +37,13 @@ class Status(Enum):
             return self.value < other.value
         return NotImplemented
 
-class EventHelper(BaseModel):
-    timestamp: Optional[datetime]
-    status: Optional[Status] = Status.DEFAULT
+class EventHelper():
+    def __init__(self,
+        timestamp: Optional[datetime],
+        status: Optional[Status] = Status.DEFAULT) -> None:
 
-    # def __repr__(self):
-    #     return f'{self.timestamp} | {self.status}'
+        self.timestamp = timestamp
+        self.status = status
 
-    def __str__(self):
+    def __repr__(self) -> str:
         return f'{self.timestamp} | {self.status}'

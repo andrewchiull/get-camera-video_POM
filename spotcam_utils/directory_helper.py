@@ -2,33 +2,19 @@ import os
 import sys
 from datetime import datetime
 import logging
-from typing import Optional, Any
-
-from pydantic import BaseSettings
 
 from spotcam_utils.config_helper import ConfigHelper
 
-
-class DirectoryHelper(BaseSettings):
-    CAMERA_NAME: str
-    DATE: Optional[datetime] = datetime.now()
-
-    # BaseSettings determines the values by reading from the environment
-    HOME: str
-    PWD: str
-
-    DRIVER: str = ''
-    DOWNLOADS: str = ''
-    UNRENAMED: str = ''
-    RENAMED: str = ''
-    FTP: dict = {}
-    os = {
-        'darwin': 'macos',
-        'linux': 'linux'
-    }
-    def __init__(self, **data: Any):
-        super().__init__(**data)
-
+class DirectoryHelper():
+    def __init__(self, CAMERA_NAME, DATE = datetime.now()):
+        self.CAMERA_NAME = CAMERA_NAME
+        self.DATE = DATE
+        self.HOME = os.environ['HOME']
+        self.PWD = os.environ['PWD']
+        self.os = {
+            'darwin': 'macos',
+            'linux': 'linux'
+        }
         self.DRIVER = os.path.join(
             self.PWD, 'spotcam_utils/browser_driver', self.os[sys.platform])
 

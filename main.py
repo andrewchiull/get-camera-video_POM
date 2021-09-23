@@ -40,20 +40,23 @@ class Main:
             try:
                 logging.info('')
                 self.log_title('')
+
                 self.log_title(f'Get videos from {self.CAMERA_NAME[self.LOCATION]}')
                 self.log_title(f'{self.DATE.date()}')
                 self.driver = self.get_driver()
+
                 self.log_title(f'Login')
                 self.login()
+
                 self.log_title(f'Get events')
                 self.events = self.get_events()
-                if not self.events:
+                if self.events is None:
                     logging.warning('There are no events on the date. Driver quits.')
                     return
                 logging.info('\n' + pformat(self.events))
 
-                self.log_title(f'Check is able to skip')
-                self.check_is_able_to_skip()
+                self.log_title(f'Check videos whose request is skippable')
+                self.check_is_skippable()
                 break
             except Exception:
                 self.error_message()
@@ -73,7 +76,7 @@ class Main:
             except Exception:
                 self.error_message()
                 continue
-            if all(self.events[i].status >= Status.ALL_DONE for i in self.events):
+            if all(event.status >= Status.ALL_DONE for event in self.events.values()):
                 self.log_title('Whole process finished')
                 self.log_title('')
                 logging.info('')
@@ -89,7 +92,7 @@ class Main:
         }
         options.add_experimental_option('prefs', prefs)
         # options.add_argument('--start-fullscreen')
-        options.headless = True # TEST_NORMAL_OPEN headless mode
+        # options.headless = True # TEST_NORMAL_OPEN headless mode
 
         sys.path.append(self.dirs.DRIVER)
         driver_path = os.path.join(self.dirs.DRIVER, 'chromedriver')
@@ -110,17 +113,17 @@ class Main:
         camera_page.get_camera_page(self.CAMERA_NAME[self.LOCATION])
         if not camera_page.check_month_and_year_on_calendar():
             logging.warning('The date is too long ago from now.')
-            return {}
+            return
         if not camera_page.check_day_on_calendar():
             logging.warning('There are not any kinds of events on the date.')
-            return {}
+            return
 
         motion_events = camera_page.get_motion_events()
         if not motion_events:
             logging.warning('There are no motion events on the date.')
-            return {}
+            return
 
-        # motion_events = motion_events[:3]  # TEST Use some events
+        motion_events = motion_events[:3]  # TEST Use some events
 
         events = {}
         for index, ev in enumerate(motion_events):
@@ -130,7 +133,7 @@ class Main:
 
         return events
 
-    def check_is_able_to_skip(self):
+    def check_is_skippable(self):
         video_page = VideoPage(
             self.driver, self.dirs, self.config, self.CAMERA_NAME[self.LOCATION])
         logging.info('')
@@ -169,8 +172,7 @@ class Main:
 
         # Make a txt containing all events
         date_str = self.DATE.strftime('%Y-%m-%d')
-        events_txt_filename = \
-            f'{self.CAMERA_NAME[self.LOCATION]}_{date_str}.txt'
+        events_txt_filename = f'{self.CAMERA_NAME[self.LOCATION]}_{date_str}.txt'
         events_txt_path = os.path.join(self.dirs.RENAMED, events_txt_filename)
         f = open(events_txt_path, 'w')
         for key, ev in self.events.items():
@@ -213,33 +215,16 @@ class Main:
             self.log_status(key)
             logging.info('')
 
-    # deprecated
-    """
-    def upload_empty_txt(self):
-        video_page = VideoPage(
-            self.driver, self.dirs, self.config, self.CAMERA_NAME[self.LOCATION])
-
-        date_str = self.DATE.strftime('%Y-%m-%d')
-        events_txt_filename = \
-            f'{self.CAMERA_NAME[self.LOCATION]}_{date_str}_EMPTY.txt'
-        events_txt_path = os.path.join(self.dirs.RENAMED, events_txt_filename)
-        f = open(events_txt_path, 'w')
-        f.close()
-        video_page.upload_txt(events_txt_path, events_txt_filename)
-        return video_page
-    """
-
     def log_title(self, msg, level=logging.INFO):
         msg = f'[ {msg} ]'
         logging.log(msg=f'{msg:=^60}', level=level)
 
     def error_message(self):
         err_head = f'ERROR #{self.ERR_COUNT: >2}'
-        full_stack = ''.join(traceback.format_stack())
         err_msg = traceback.format_exc()
         err_tail = f'END   #{self.ERR_COUNT: >2}'
         self.log_title(err_head, logging.ERROR)
-        logging.error(f'\n{full_stack}\n{err_msg}\n')
+        logging.error(f'\n{err_msg}\n')
         self.log_title(err_tail, logging.ERROR)
         self.ERR_COUNT += 1
 

@@ -32,11 +32,8 @@ class CameraPage(BasePage):
         CHECK_TIMES = 3
 
         for _ in range(CHECK_TIMES):
-            month_year_actual = \
-                self.find_element(
+            month_year_actual = self.find_element(
                     self._locators.DATE_TITLE).get_attribute("innerText")
-            logging.info(f'month_year_expect = {month_year_expect}')
-            logging.info(f'month_year_actual = {month_year_actual}')
 
             if month_year_expect == month_year_actual:
                 return True
@@ -49,13 +46,8 @@ class CameraPage(BasePage):
         return False
 
     def check_day_on_calendar(self):
-        date_on_calendar = \
-            self.find_element(self._locators.DATE_ON_CALENDAR(date=self.date))
+        date_on_calendar = self.find_element(self._locators.DATE_ON_CALENDAR(date=self.date))
 
-        logging.info(
-            f'The day of the date = {date_on_calendar.get_attribute("innerText")}')
-        logging.info(
-            f'The class name of the date = {date_on_calendar.get_attribute("class")}')
         if 'disabled' in date_on_calendar.get_attribute("class"):
             return False
         self.click_element(self._locators.DATE_ON_CALENDAR(date=self.date))
@@ -82,10 +74,10 @@ class CameraPage(BasePage):
             'hour': timestamp.strftime('%H'),
             'minute': timestamp.strftime('%M')
         }
-        for key, value in options.items():
-            self.select(self._locators.OPTION(key), value)
-            assert (value ==
-                    self.find_element(self._locators.RESULT(key)).get_attribute('innerText'))
+        for time_scale, value in options.items():
+            self.select(self._locators.OPTION(time_scale), value)
+            expected_value = self.find_element(self._locators.RESULT(time_scale)).get_attribute('innerText')
+            assert value == expected_value
 
         # Generate a 2 min video in case the alert happens in the end of 1 min video.
         if timestamp.second > 50:
@@ -95,8 +87,8 @@ class CameraPage(BasePage):
             logging.info('Generate a 1 min video.')
             video_length = '1'
         self.select(self._locators.OPTION_LENGTH, video_length)
-        assert (video_length ==
-                self.find_element(self._locators.RESULT_LENGTH).get_attribute('innerText'))
+        expected_video_length = self.find_element(self._locators.RESULT_LENGTH).get_attribute('innerText')
+        assert video_length == expected_video_length
 
         self.click_element(self._locators.OK_BTN)
         self.wait_page_until_loading()
