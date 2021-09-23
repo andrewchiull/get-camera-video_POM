@@ -77,7 +77,7 @@ class CameraPage(BasePage):
         for time_scale, value in options.items():
             self.select(self._locators.OPTION(time_scale), value)
             expected_value = self.find_element(self._locators.RESULT(time_scale)).get_attribute('innerText')
-            assert value == expected_value
+            assert value == expected_value, f'{value = }, {expected_value = }'
 
         # Generate a 2 min video in case the alert happens in the end of 1 min video.
         if timestamp.second > 50:
@@ -88,7 +88,7 @@ class CameraPage(BasePage):
             video_length = '1'
         self.select(self._locators.OPTION_LENGTH, video_length)
         expected_video_length = self.find_element(self._locators.RESULT_LENGTH).get_attribute('innerText')
-        assert video_length == expected_video_length
+        assert video_length == expected_video_length, f'{video_length = }, {expected_video_length = }'
 
         self.click_element(self._locators.OK_BTN)
         self.wait_page_until_loading()

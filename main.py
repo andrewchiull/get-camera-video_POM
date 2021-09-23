@@ -67,7 +67,7 @@ class Main:
         for i in range(RETRY_TIMES):
             try:
                 self.log_title(f'Round {i}: Requesting')
-                self.request_videos() # TEST skip request
+                self.request_videos() # TEST_NORMAL_OPEN skip request
                 logging.info('\n' + pformat(self.events))
 
                 self.log_title(f'Round {i}: Downloading')
@@ -92,7 +92,7 @@ class Main:
         }
         options.add_experimental_option('prefs', prefs)
         # options.add_argument('--start-fullscreen')
-        # options.headless = True # TEST_NORMAL_OPEN headless mode
+        options.headless = True # TEST_NORMAL_OPEN headless mode
 
         sys.path.append(self.dirs.DRIVER)
         driver_path = os.path.join(self.dirs.DRIVER, 'chromedriver')
@@ -123,7 +123,7 @@ class Main:
             logging.warning('There are no motion events on the date.')
             return
 
-        motion_events = motion_events[:3]  # TEST Use some events
+        # motion_events = motion_events[:3]  # TEST Use some events
 
         events = {}
         for index, ev in enumerate(motion_events):

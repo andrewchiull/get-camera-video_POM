@@ -13,7 +13,7 @@ class BasePage:
         self.wait = None
         self.driver = driver
         self.implicitly_wait_timeout = 2
-        self.explicit_wait_timeout = 5
+        self.explicit_wait_timeout = 10
 
         self.driver.implicitly_wait(self.implicitly_wait_timeout)
         self.set_explicit_wait_timeout(self.explicit_wait_timeout)
@@ -47,7 +47,7 @@ class BasePage:
         logging.debug("Click Element: %s", locator)
         _element = self.wait.until(ec.element_to_be_clickable(locator))
         _element.click()
-        # self.wait_page_until_loading()
+        time.sleep(0.5) # sleep
 
     def wait_and_accept_alert(self):
         self.wait.until(ec.alert_is_present())
@@ -151,3 +151,4 @@ class BasePage:
 
     def select(self, locator: tuple, target: str):
         Select(self.find_element(locator)).select_by_visible_text(target)
+        time.sleep(1) # sleep

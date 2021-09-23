@@ -46,4 +46,4 @@ class EventHelper():
         self.status = status
 
     def __repr__(self) -> str:
-        return f'{self.timestamp} | {self.status}'
+        return f'Event: {self.timestamp}, {self.status}'
