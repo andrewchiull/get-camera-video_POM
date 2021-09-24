@@ -2,6 +2,7 @@ import os
 import sys
 from datetime import datetime
 import logging
+import shutil
 
 from spotcam_utils.config_helper import ConfigHelper
 
@@ -24,6 +25,9 @@ class DirectoryHelper():
             logging.info(f'mkdir: {self.DOWNLOADS}')
 
         self.UNRENAMED = os.path.join(self.DOWNLOADS, 'unrenamed')
+        # Reset UNRENAMED everyday
+        if os.path.exists(self.UNRENAMED):
+            shutil.rmtree('/folder_name')
         if not os.path.exists(self.UNRENAMED):
             os.mkdir(self.UNRENAMED)
             logging.info(f'mkdir: {self.UNRENAMED}')
