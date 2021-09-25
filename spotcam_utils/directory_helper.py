@@ -27,7 +27,7 @@ class DirectoryHelper():
         self.UNRENAMED = os.path.join(self.DOWNLOADS, 'unrenamed')
         # Reset UNRENAMED everyday
         if os.path.exists(self.UNRENAMED):
-            shutil.rmtree('/folder_name')
+            shutil.rmtree(self.UNRENAMED)
         if not os.path.exists(self.UNRENAMED):
             os.mkdir(self.UNRENAMED)
             logging.info(f'mkdir: {self.UNRENAMED}')

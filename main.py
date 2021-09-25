@@ -92,7 +92,7 @@ class Main:
         }
         options.add_experimental_option('prefs', prefs)
         # options.add_argument('--start-fullscreen')
-        options.headless = True # TEST_NORMAL_OPEN headless mode
+        # options.headless = True # TEST_NORMAL_OPEN headless mode
 
         sys.path.append(self.dirs.DRIVER)
         driver_path = os.path.join(self.dirs.DRIVER, 'chromedriver')
