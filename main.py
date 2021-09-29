@@ -149,7 +149,7 @@ class Main:
             if timestamp_generated in video_page.get_generated_videos():
                 ev.status = Status.GENERATE_DONE
                 self.log_status(key)
-                continue  # Skip the ungenerated events
+                continue  # Skip the generated events
 
             self.log_status(key)
         logging.info('')

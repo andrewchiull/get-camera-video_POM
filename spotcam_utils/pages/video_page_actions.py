@@ -59,6 +59,10 @@ class VideoPage(BasePage):
                 return True
             elif len(all_mp4) > 1:
                 logging.error(f'More than one video is in unrenamed: {all_mp4}')
+                shutil.rmtree(self.dirs.UNRENAMED)
+                os.mkdir(self.dirs.UNRENAMED)
+                logging.error(f'Clear all videos in unrenamed')
+
         return False
 
     def rename_video(self, key: int, timestamp: datetime):
