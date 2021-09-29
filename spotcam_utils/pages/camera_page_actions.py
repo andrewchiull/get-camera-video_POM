@@ -21,6 +21,7 @@ class CameraPage(BasePage):
     def get_camera_page(self, camera_name: str):
         url = 'https://www.myspotcam.com/tc/myspotcam/'
         self.get_page(url)
+        self.remove_element(self.find_element(self._locators.NEW_MESSAGE))
         self.click_element(self._locators.CAMERA_PAGE(camera_name))
         self.click_element(self._locators.PAUSE_BTN)
         self.remove_element(self.find_element(self._locators.STREAM))

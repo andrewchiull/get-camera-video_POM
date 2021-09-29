@@ -5,6 +5,7 @@ from datetime import datetime
 class CameraPageLocators:
     # locators
     
+    NEW_MESSAGE = (By.XPATH, '//*[@id="new_message"]')
     STREAM = (By.XPATH, '//*[@class="divide divide1 active"]')
     PAUSE_BTN = (By.XPATH, '//*[@class="controlBtn pauseBtn"]')
     CALENDAR_BOX = (By.XPATH, '//*[@class="calendarBox"]')
